@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="眠気誘発タップ">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi55yg5rCX6KqY55m66Kej6YODIiwic2hvcnRfbmFtZSI6IuOCv+ODg+ODlyIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMDAwMDAwIiwidGhlbWVfY29sb3IiOiIjMDAwMDAwIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU1UVXlJaUJvWldsbmFIUTlJakUxTWlJZ2RtbGxkMEp2ZUQwaU1DQXdJREUxTWlBeE5USWlJR1pwYkd3OUlpTXdNREF3TURBaVBpQThZMmx5WTJ4bElHTjRQU0kzTmlJZ1kzaDlJamMySWlKeVBTSXpJaUJtYVd4c1BTSWpabVptWmlJdlBqd3ZjM1puUGc9PSIsInNpemVzIjoiMTUyeDE1MiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <title>眠気誘発タップ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        background-color: #000;
+        overflow: hidden;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+    
+    #container {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        background-color: #000;
+    }
+    
+    .dot {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background-color: #fff;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: none;
+    }
+    
+    .dot::before {
+        content: '';
+        position: absolute;
+        width: 44px;
+        height: 44px;
+        top: -20px;
+        left: -20px;
+        border-radius: 50%;
+        /* デバッグ用: background-color: rgba(255,0,0,0.1); */
+    }
+</style>
+```
+
+</head>
+<body>
+    <div id="container">
+        <div class="dot" id="dot"></div>
+    </div>
+
+```
+<script>
+    const container = document.getElementById('container');
+    const dot = document.getElementById('dot');
+    
+    function getRandomPosition() {
+        const containerRect = container.getBoundingClientRect();
+        const margin = 30; // 端から30px離す
+        const maxX = containerRect.width - margin * 2;
+        const maxY = containerRect.height - margin * 2;
+        
+        const x = Math.random() * maxX + margin;
+        const y = Math.random() * maxY + margin;
+        
+        return { x, y };
+    }
+    
+    function moveDot() {
+        const position = getRandomPosition();
+        dot.style.left = position.x + 'px';
+        dot.style.top = position.y + 'px';
+    }
+    
+    // 初期位置設定
+    moveDot();
+    
+    // 全画面にする関数
+    function requestFullscreen() {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+        }
+    }
+    
+    // 最初のタップで全画面化を試行
+    let hasTriedFullscreen = false;
+    
+    // タップイベント
+    dot.addEventListener('click', () => {
+        if (!hasTriedFullscreen) {
+            requestFullscreen();
+            hasTriedFullscreen = true;
+        }
+        moveDot();
+    });
+    
+    dot.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (!hasTriedFullscreen) {
+            requestFullscreen();
+            hasTriedFullscreen = true;
+        }
+        moveDot();
+    });
+    
+    // 画面全体のタップを防ぐ
+    container.addEventListener('click', (e) => {
+        if (e.target !== dot) {
+            e.preventDefault();
+        }
+    });
+    
+    // iOS Safariでのフル画面対応
+    if ('standalone' in window.navigator && window.navigator.standalone) {
+        document.body.style.paddingTop = '0px';
+    }
+</script>
+```
+
+</body>
+</html>
